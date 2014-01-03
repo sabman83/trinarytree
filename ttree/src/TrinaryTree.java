@@ -31,30 +31,42 @@ public class TrinaryTree<T extends Comparable<T>>{
             return root;
         }
         
-        Node<T> curentNode =  root;
+        Node<T> currentNode =  root;
         
-        do()
+        do
         {
-        	if(current.value == value)
+        	if(currentNode.value == value)
             {
-            	root.center = newNode;
+        		currentNode.center = newNode;
+        		break;
             }
             
-            if( root.value < value)
+            if( currentNode.value.compareTo(value) < 0)
             {
-            	if(root.left != null)
+            	if(currentNode.left != null)
             	{
             		currentNode = currentNode.left;
+            	}
+            	else
+            	{
+            		currentNode.left = newNode;
+            		break;
             	}
             }
             else
             {
-            	if(root.right != null)
+            	if(currentNode.right != null)
             	{
-            		currentNode = 
+            		currentNode = root.right;
+            	}
+            	else
+            	{
+            		currentNode.right = newNode;
+            		break;
             	}
             }
         }while(currentNode != null);
+        return root;
     }
     
     public void printTree(Node<T> root)
