@@ -46,7 +46,7 @@ public class TrinaryTree<T extends Comparable<T>>{
     	return (p.leftValue() == value || p.centerValue() == value || p.rightValue() == value );
     }
     
-    private Node<T> parentOf(Node<T> root, T value)
+    private Node<T> parentNodeOf(Node<T> root, T value)
     {
     	Node<T> parent = root;
     	
@@ -55,6 +55,17 @@ public class TrinaryTree<T extends Comparable<T>>{
     		parent = (parent.value.compareTo(value) > 0) ? parent.left : parent.right; 
     	}
 		return parent;
+    }
+    
+    private Node<T> parentNodeOf(Node<T> root, Node<T> node)
+    {
+        Node<T> parent = root;
+        
+        while( (parent != null) && (!isParent(parent, node.value)) )
+        {
+            parent = (parent.value.compareTo(node.value) > 0) ? parent.left : parent.right; 
+        }
+        return parent;
     }
     
     public Node<T> search(Node<T> root, T value)
@@ -68,10 +79,37 @@ public class TrinaryTree<T extends Comparable<T>>{
     	return node;
     }
     
-    
+    private void moveNodeUp(Node<T> root, Node<T> node)
+    {
+        Node<T> parent = parentNodeOf(root,node);
+        Node<T> newParent = parentNodeOf(root,parent);
+        
+        parent = null;
+        insertNode(newParent, node);
+    }
     public void deleteNode(Node<T> root, T value)
     {
+    	Node<T> node = search(root,value);
     	
+    	if( isLeafNode( node ) )
+    	{
+    	    node = null;
+    	    return;
+    	}
+    	
+    	Node<T> parent =  parentNodeOf(root, node);
+    	
+    	if( (node.center != null) &&  isLeafNode(node.center))
+    	{
+    	    Node<T> l = node.left;
+    	    Node<T> r = node.right;
+    	    Node<T> c = node.center;
+    	    
+    	    node = null;
+    	    insertNode(parent, c);
+    	    c.left = l;
+    	    c.right = r;
+    	}
     }
     
     
@@ -80,9 +118,14 @@ public class TrinaryTree<T extends Comparable<T>>{
     {
         Node<T> newNode = new Node<T>(value);
 
+        return insertNode(root,newNode);
+    }
+    
+    public Node<T> insertNode(Node<T> root, Node<T> node)
+    {
         if(root == null)
         {
-            root = newNode;
+            root = node;
             return root;
         }
         
@@ -90,35 +133,35 @@ public class TrinaryTree<T extends Comparable<T>>{
         
         do
         {
-        	if(currentNode.value == value)
+            if(currentNode.value == node.value)
             {
-        		currentNode.center = newNode;
-        		break;
+                currentNode.center = node;
+                break;
             }
             
-            if( currentNode.value.compareTo(value) > 0)
+            if( currentNode.value.compareTo(node.value) > 0)
             {
-            	if(currentNode.left != null)
-            	{
-            		currentNode = currentNode.left;
-            	}
-            	else
-            	{
-            		currentNode.left = newNode;
-            		break;
-            	}
+                if(currentNode.left != null)
+                {
+                    currentNode = currentNode.left;
+                }
+                else
+                {
+                    currentNode.left = node;
+                    break;
+                }
             }
             else
             {
-            	if(currentNode.right != null)
-            	{
-            		currentNode = currentNode.right;
-            	}
-            	else
-            	{
-            		currentNode.right = newNode;
-            		break;
-            	}
+                if(currentNode.right != null)
+                {
+                    currentNode = currentNode.right;
+                }
+                else
+                {
+                    currentNode.right = node;
+                    break;
+                }
             }
         }while(currentNode != null);
         return root;
