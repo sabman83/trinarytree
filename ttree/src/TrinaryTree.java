@@ -14,12 +14,67 @@ public class TrinaryTree<T extends Comparable<T>>{
             this.value = value;
         }
         
+        public T leftValue()
+        {
+        	return (left == null)?null:left.value;
+        }
+        
+        public T centerValue()
+        {
+        	return (center == null)?null:center.value;
+        }
+        
+        public T rightValue()
+        {
+        	return ( right == null)?null:right.value;
+        }
+        
         public T value = null;
         
         public Node<T> left = null;
         public Node<T> right = null;
         public Node<T> center = null;
     }
+    
+    private boolean isLeafNode(Node<T> node)
+    {
+    	return (node != null && node.center == null && node.left == null && node.right == null);
+    }
+    
+    private boolean isParent(Node<T> p, T value)
+    {
+    	return (p.leftValue() == value || p.centerValue() == value || p.rightValue() == value );
+    }
+    
+    private Node<T> parentOf(Node<T> root, T value)
+    {
+    	Node<T> parent = root;
+    	
+    	while( (parent != null) && (!isParent(parent, value)) )
+    	{
+    		parent = (parent.value.compareTo(value) > 0) ? parent.left : parent.right; 
+    	}
+		return parent;
+    }
+    
+    public Node<T> search(Node<T> root, T value)
+    {
+    	Node<T> node = root;
+    	while(node.value != value)
+    	{
+    		node  = (node.value.compareTo(value) > 0) ? node.left : node.right;
+    	}
+    	
+    	return node;
+    }
+    
+    
+    public void deleteNode(Node<T> root, T value)
+    {
+    	
+    }
+    
+    
     
     public Node<T> insertNode(Node<T> root, T value)
     {
@@ -41,7 +96,7 @@ public class TrinaryTree<T extends Comparable<T>>{
         		break;
             }
             
-            if( currentNode.value.compareTo(value) < 0)
+            if( currentNode.value.compareTo(value) > 0)
             {
             	if(currentNode.left != null)
             	{
@@ -57,7 +112,7 @@ public class TrinaryTree<T extends Comparable<T>>{
             {
             	if(currentNode.right != null)
             	{
-            		currentNode = root.right;
+            		currentNode = currentNode.right;
             	}
             	else
             	{
@@ -82,9 +137,12 @@ public class TrinaryTree<T extends Comparable<T>>{
             if( node == null)
             {
                 System.out.println("");
+                q.add(null);
+                if(q.peek() == null)
+                	break;
                 continue;
             }
-            System.out.print(node.value);
+            System.out.print(node.value + " ");
             if(node.left != null)
             {
                 q.add(node.left);
@@ -103,8 +161,6 @@ public class TrinaryTree<T extends Comparable<T>>{
     public static void main(String args[])
     {
         TrinaryTree<Integer> tree = new TrinaryTree<Integer>();
-        Integer r = 5;
-        System.out.println(r.compareTo(null));
         Integer[] nodes = new Integer[]{5, 4, 9, 5, 7, 2, 2};
         
         Node<Integer> root = null; 
