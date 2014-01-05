@@ -16,6 +16,126 @@ public class Ttree<T extends Comparable<T>>
         public Node<T> right;
     }
     
+    private boolean isLeaf(Node<T> node)
+    {
+    	return ( node.left == null && node.center == null && node.right == null);
+    }
+    
+    private Node<T> search( Node<T> root, T value )
+    {
+    	Node<T> node = root;
+    	
+    	while(node != null && node.value != value)
+    	{
+    		node = (node.value.compareTo(value) < 0) ? node.left : node.right;
+    	}
+    	
+    	return node;
+    }
+    
+    private boolean isParent( Node<T> p, Node<T> c )
+    {
+    	return ( p.left == c || p.center == c || p.right == c );
+    }
+    
+    private Node<T> parentOf( Node<T> root, Node<T> child )
+    {
+    	if( root == null || child == null ) {return null;}
+    	
+    	Node<T> parent = root;
+    	
+    	do
+    	{
+    		if( isParent( parent, child ) ) { break; }
+    		
+    		if( parent.value == child.value ) { parent = parent.center; break; }
+    		
+    		parent = ( parent.value.compareTo( child.value ) > 0 ? parent.left : parent.right);
+    		
+    	}while( parent  != null );
+    	
+    	return parent;
+    }
+    
+    private Node<T>  moveUp( Node<T> p, Node<T> c)
+    {
+    	if(c == null)
+    		return null;
+    	
+    	if( isLeaf(c) ) { return c; }
+    	
+    	Node<T> mid = c.center;
+    	Node<T> l = c.left;
+    	Node<T> r = c.right;
+     	
+    	if(mid != null)
+    	{
+    		replaceChild(p,c,mid);
+    		mid.left = l;
+    		mid.right = r;
+    		return c.center;
+    	}
+    	
+    	if(c.right != null)
+    	{
+    		return moveUp(c,c.right);
+    	}
+    	else
+    	{
+    		return moveUp(c,c.left);
+    	}
+    }
+    
+    private void replaceChild( Node<T> parent, Node<T> child, Node<T> newChild)
+    {
+    	if(parent.left == child)
+    	{
+    		parent.left = newChild;
+    	}else if( parent.right == child)
+    	{
+    		parent.right = newChild;
+    	}else if( parent.center == child){
+    		parent.center = newChild;
+    	}
+    	
+    	child = null;
+    }
+    
+    public void delete(Node<T> root, T value)
+    {
+    	Node<T> node = search( root,value );
+    	
+    	Node<T> l = node.left;
+    	Node<T> c = node.center;
+    	Node<T> r = node.right;
+    	
+    	if( isLeaf( node ) )
+    	{
+    		node = null;
+    		return;
+    	}
+    	
+    	Node<T> parent = parentOf( root,node );
+    	
+    	if( c != null && isLeaf(c) )
+    	{
+    		replaceChild(parent, node, c);
+    		c.left = l;
+    		c.right = r;
+    	}
+    	
+    	if ( r != null && isLeaf(r))
+    	{
+    		replaceChild(parent, node, r);
+    		c.left = l;
+    	}
+    	
+    	if( l != null && isLeaf(l))
+    	{
+    		replaceChild(parent,node,l);
+    	}
+    }
+    
     public Node<T> insert(Node<T> root, T value)
     {
         Node<T> newNode = new Node<T>(value);
