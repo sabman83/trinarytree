@@ -68,22 +68,21 @@ public class Ttree<T extends Comparable<T>>
     	Node<T> l = c.left;
     	Node<T> r = c.right;
      	
+    	Node<T> newChild = null;
+    	
     	if(mid != null)
     	{
-    		replaceChild(p,c,mid);
-    		mid.left = l;
-    		mid.right = r;
-    		return c.center;
+    	    replaceChild(p,c,mid);
+    	    mid.left = l;
+    	    mid.right = r;
+    	    return mid;
     	}
     	
-    	if(c.right != null)
-    	{
-    		return moveUp(c,c.right);
-    	}
-    	else
-    	{
-    		return moveUp(c,c.left);
-    	}
+    	newChild = (r != null) ? moveUp(c,r) : moveUp(c,l);
+    	
+    	replaceChild(p,c,newChild);
+    	
+    	return newChild;
     }
     
     private void replaceChild( Node<T> parent, Node<T> child, Node<T> newChild)
@@ -105,10 +104,6 @@ public class Ttree<T extends Comparable<T>>
     {
     	Node<T> node = search( root,value );
     	
-    	Node<T> l = node.left;
-    	Node<T> c = node.center;
-    	Node<T> r = node.right;
-    	
     	if( isLeaf( node ) )
     	{
     		node = null;
@@ -117,23 +112,9 @@ public class Ttree<T extends Comparable<T>>
     	
     	Node<T> parent = parentOf( root,node );
     	
-    	if( c != null && isLeaf(c) )
-    	{
-    		replaceChild(parent, node, c);
-    		c.left = l;
-    		c.right = r;
-    	}
+    	moveUp( parent, node);
     	
-    	if ( r != null && isLeaf(r))
-    	{
-    		replaceChild(parent, node, r);
-    		c.left = l;
-    	}
-    	
-    	if( l != null && isLeaf(l))
-    	{
-    		replaceChild(parent,node,l);
-    	}
+    	node = null;
     }
     
     public Node<T> insert(Node<T> root, T value)
