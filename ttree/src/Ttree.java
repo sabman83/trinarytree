@@ -77,10 +77,10 @@ public class Ttree<T extends Comparable<T>>
    {
        Node<T> mergeRoot = null;
        
-       if(isLeaf(l))
+       if(isLeaf(r))
        {
-           l.right = r;
-           return l;
+           r.left = l;
+           return r;
        }
        
        mergeRoot = l;
