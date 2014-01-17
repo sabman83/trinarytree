@@ -30,7 +30,7 @@ public class Ttree<T extends Comparable<T>>
     		node = (node.value.compareTo(value) < 0) ? node.left : node.right;
     	}
     	
-    	return node;
+    	return ( node.center != null ) ? node.center : node;
     }
     
     private boolean isParent( Node<T> p, Node<T> c )
@@ -101,27 +101,25 @@ public class Ttree<T extends Comparable<T>>
    public void delete(Node<T> root, T value)
     {
     	Node<T> node = search( root,value );
+    	Node<T> parent = parentOf( root,node );
     	
     	if( isLeaf( node ) )
     	{
-    		node = null;
+    	    replaceChild(parent, node, null);
     		return;
     	}
     	
-    	Node<T> parent = parentOf( root,node );
 
     	if(node.center != null)
     	{
     	    node.center.left = node.left;
     	    node.center.right = node.right;
     	    replaceChild(parent, node, node.center);
-    	    node = null;
     	    return;
     	}
     	
     	Node<T> newChild = merge(root,node.left,node.right);
     	replaceChild(parent, node, newChild);
-        node = null;
     }
     
     public Node<T> insert(Node<T> root, T value)
@@ -221,5 +219,8 @@ public class Ttree<T extends Comparable<T>>
         }
         
         tree.printTree(root);
+        tree.delete(root, 5);
+        tree.printTree(root);
+        
     }
 }
