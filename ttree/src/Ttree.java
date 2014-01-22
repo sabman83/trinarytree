@@ -59,6 +59,8 @@ public class Ttree<T extends Comparable<T>>
     
     private void replaceChild( Node<T> parent, Node<T> child, Node<T> newChild)
     {
+        if( parent == null || child == null) return;
+            
         if(parent.left == child)
         {
             parent.left = newChild;
@@ -91,9 +93,8 @@ public class Ttree<T extends Comparable<T>>
        }
        
        Node<T> parent = parentOf(root,mergeRoot);
-       parent.right = mergeRoot.left;
-       mergeRoot.left = l;
        mergeRoot.right = r;
+       replaceChild(parent, mergeRoot, null);
        
        return mergeRoot;
    }
@@ -219,6 +220,7 @@ public class Ttree<T extends Comparable<T>>
         }
         
         tree.printTree(root);
+        tree.delete(root, 5);
         tree.delete(root, 5);
         tree.printTree(root);
         
